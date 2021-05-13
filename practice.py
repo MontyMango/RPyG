@@ -22,7 +22,7 @@ class battle:
         self.choseturn = 0
 
         # Player tactics
-        self.fightmenu = ['- [attack]', '- [skip] turn']
+        self.fightmenu = ['- [attack]', '- [blitz]','- [skip] turn']
 
         # Player weapons (Name, Attack, Durability (or Ammunition))
         self.stick = ['Stick', 1, 5]
@@ -31,38 +31,37 @@ class battle:
         self.pistol = ['Pistol', 4, 12]
 
         # Player information
+        self.blitz = 0
         self.health = 50
         self.armor = 1
         self.inv = [['Fists', 1]]
         self.currentweapon = ['Fists', 1]
-        self.deathh = 0
+        # self.deathh = 0
 
     def spawn(self):
         a = r.randint(0, 5)
         if a == 0:  # Spawns basic enemies
             b = r.randint(0, 3)
-            if b == 0:
-                self.enemy1 = self.unarmed_spirit
-            elif b == 1:
-                self.enemy1 = self.goblin
-            elif b == 2:
-                self.enemy1 = self.goblin_w_armor
+            if b == 0: self.enemy1 = self.unarmed_spirit
+            elif b == 1: self.enemy1 = self.goblin
+            elif b == 2: self.enemy1 = self.goblin_w_armor
+            else: self.spawn()
+            self.appearance()
         elif a == 1:  # Spawn ranged enemies
             b = r.randint(0, 2)
-            if b == 0:
-                self.enemy1 = self.goblin_bow
-            elif b == 1:
-                self.enemy1 = self.gang_member_w_gun
+            if b == 0: self.enemy1 = self.goblin_bow
+            elif b == 1: self.enemy1 = self.gang_member_w_gun
+            else: self.spawn()
+            self.appearance()
         else:
             print("Nothing has spawned... Yet...")
             sleep(1)
             self.spawn()
 
-        if self.enemy1 != 0:
-            print("\n! - A", self.enemy1[0],
-                  "has appeared! Get ready to fight!")
-            sleep(2)
-            self.firstturn()
+    def appearance(self):
+        print("\n! - A", self.enemy1[0],"has appeared! Get ready to fight!")
+        sleep(2)
+        self.firstturn()
 
     def firstturn(self):
         print("\nLet's see who goes first", end="")
@@ -79,26 +78,25 @@ class battle:
         sleep(2)
         self.turn()
 
-    def turn(self):
+    def deathcheck(self):
         if self.health <= 0:
-            print('rip... Game over...')
-            self.deathh = 1
             self.death()
             sleep(2)
-
         elif self.enemy1[1] <= 0:
             self.enemy1 = 0
             print('Enemy has been defeated! Congrats!')
             sleep(2)
+            self.enemy1 = 0
+            self.spawn()
+        else:
+            self.turn()
 
+    def turn(self):
         if self.choseturn == 0:
-            print("\n------\n>>>Your turn\n------\n")
-            if self.deathh == 0:
-                self.playerturn()
-            else:
-                print("rip")
+            print("\n","-"*6,"\n>>>Your turn\n","-"*6,"\n")
+            self.playerturn()
         elif self.choseturn == 1:
-            print("\n------\n>>>Enemy's turn\n------\n")
+            print("\n","-"*6,"\n>>>Enemy's turn\n","-"*6,"\n")
             try:
                 self.enemyturn()
             except:
@@ -106,9 +104,30 @@ class battle:
                 self.spawn()
 
     def playerturn(self):
+        if self.blitz != 0:
+            print("Blitz is activated. Rounds until blitz is done: ",self.blitz+1,)
+            try:
+              dmg = self.currentweapon[1]
+              self.enemy1[1] -= dmg
+              print("The", self.enemy1[0], "was hit for", dmg, "damage!",
+                    "\nRemaining enemy health:", self.enemy1[1])
+              try:
+                  self.currentweapon[2] -= 1
+              except:
+                  pass
+              self.choseturn = 1
+              self.blitz-=1
+              self.deathcheck()
+            except:
+                self.deathcheck()
+
         for i in self.fightmenu:
             print(i)
         inp = input(">")
+
+
+        # Listed actions
+
         if inp == 'attack':
           try:
               dmg = self.currentweapon[1]
@@ -120,29 +139,52 @@ class battle:
               except:
                   pass
               self.choseturn = 1
-              self.turn()
+              self.deathcheck()
           except:
             print("?")
             sleep(2)
             print("Where target?")
-            self.turn()
+            self.deathcheck()
 
         elif inp == 'skip':
             print("\nYou skipped your turn...")
             self.choseturn = 1
             sleep(1)
-            self.turn()
+            self.deathcheck()
+
+        elif inp == 'blitz':
+            print("\nHow much rounds do you want to blitz?")
+            try:
+                self.blitz = int(input("Rounds: "))
+                self.blitz-=1
+                print("Okay, blitzing...")
+                self.playerturn()
+            except:
+                print("\n\n(Please give a valid number. Returning back to the menu)\n")
+                sleep(3)
+                self.playerturn()
+
+        # Unlisted actions
 
         elif inp == 'kill':
-          print("The rays from the gods come striking down.")
-          sleep(2)
-          print("The enemy screams and burns from the rays.")
-          sleep(2)
-          self.enemy1[1]-=self.enemy1[1]
-          self.turn()
+            print("The rays from the gods come striking down.")
+            sleep(2)
+            print("The enemy screams and burns from the rays.")
+            sleep(2)
+            self.enemy1[1]-=self.enemy1[1]
+            self.deathcheck()
+        
+        elif inp == 'die':
+            print("You just plop out a blanket and pillow.")
+            sleep(2)
+            print("Alright. This looks like a safe place to sleep... Goodnight!")
+            sleep(1)
+            print("zzz...")
+            self.health-=self.health
+            self.deathcheck()
 
         else:
-            print("Please use words instead of numbers...")
+            print("\nSay that again?")
             self.playerturn()
 
     def enemyturn(self):
@@ -152,10 +194,10 @@ class battle:
               "\nYour health:", self.health)
         self.choseturn = 0
         sleep(1)
-        self.turn()
+        self.deathcheck()
 
     def death(self):
-        print("\nToday is a sad day...")
+        print("\n\n\n\n\nToday is a sad day...")
         sleep(3)
         print("I mean, they just let themselves... Die")
         sleep(3)
@@ -175,7 +217,13 @@ class battle:
         )
         sleep(3)
         print("But, who would it be?")
-
-
-fight = battle()
-fight.spawn()
+        sleep(5)
+        print("\n\n\nRetry? [y or n]")
+        a = input(">")
+        if (a == "y") or (a == "yes"):
+            print("\nAlright. Here we go.")
+            self.health = 50
+            self.enemy1 = 0
+            self.spawn()
+        elif (a == "n") or (a == "no"):
+            print("Okay, I'll just let you enjoy your death...")
