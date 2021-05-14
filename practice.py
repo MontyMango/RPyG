@@ -128,7 +128,7 @@ class battle:
 
         # Listed actions
 
-        if inp == 'attack':
+        if (inp == 'attack') or (inp == 'a'):
           try:
               dmg = self.currentweapon[1]
               self.enemy1[1] -= dmg
@@ -146,13 +146,13 @@ class battle:
             print("Where target?")
             self.deathcheck()
 
-        elif inp == 'skip':
+        elif (inp == 'skip') or (inp == 's'):
             print("\nYou skipped your turn...")
             self.choseturn = 1
             sleep(1)
             self.deathcheck()
 
-        elif inp == 'blitz':
+        elif (inp == 'blitz') or (inp == 'b'):
             print("\nHow much rounds do you want to blitz?")
             try:
                 self.blitz = int(input("Rounds: "))
@@ -166,7 +166,7 @@ class battle:
 
         # Unlisted actions
 
-        elif inp == 'kill':
+        elif (inp == 'kill') or (inp == 'k'):
             print("The rays from the gods come striking down.")
             sleep(2)
             print("The enemy screams and burns from the rays.")
@@ -174,7 +174,7 @@ class battle:
             self.enemy1[1]-=self.enemy1[1]
             self.deathcheck()
         
-        elif inp == 'die':
+        elif (inp == 'die') or (inp == 'd'):
             print("You just plop out a blanket and pillow.")
             sleep(2)
             print("Alright. This looks like a safe place to sleep... Goodnight!")
