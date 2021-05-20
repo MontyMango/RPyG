@@ -22,7 +22,7 @@ class battle:
         self.choseturn = 0
 
         # Player tactics
-        self.fightmenu = ['- [attack]', '- [blitz]','- [skip] turn']
+        self.fightmenu = ['- [attack]', '- [blitz]','- [skip] turn','- check [health]']
 
         # Player weapons (Name, Attack, Durability (or Ammunition))
         self.stick = ['Stick', 1, 5]
@@ -80,6 +80,7 @@ class battle:
 
     def deathcheck(self):
         if self.health <= 0:
+            self.blitz = 0
             self.death()
             sleep(2)
         elif self.enemy1[1] <= 0:
@@ -87,6 +88,7 @@ class battle:
             print('Enemy has been defeated! Congrats!')
             sleep(2)
             self.enemy1 = 0
+            self.blitz = 0
             self.spawn()
         else:
             self.turn()
@@ -164,6 +166,10 @@ class battle:
                 sleep(3)
                 self.playerturn()
 
+        elif (inp == 'health') or (inp == 'h'):
+          print("\nYour current health:",self.health,"\n\nEnemy's health:\n",self.enemy1[0],":",self.enemy1[1],"\n\n\n--Menu--")
+          self.playerturn()
+        
         # Unlisted actions
 
         elif (inp == 'kill') or (inp == 'k'):
