@@ -1,2 +1,2 @@
 # RPyG
- A prequel to PyRPG.
+ The precursor to PyRPG.
