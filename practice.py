@@ -35,8 +35,7 @@ class battle:
         self.health = 50
         self.armor = 1
         self.inv = [['Fists', 1]]
-        self.currentweapon = ['Fists', 1]
-        # self.deathh = 0
+        self.currentweapon = ['Fists',1]
 
     def spawn(self):
         a = r.randint(0, 5)
@@ -109,18 +108,18 @@ class battle:
         if self.blitz != 0:
             print("Blitz is activated. Rounds until blitz is done: ",self.blitz+1,)
             try:
-              dmg = self.currentweapon[1]
-              self.enemy1[1] -= dmg
-              print("The", self.enemy1[0], "was hit for", dmg, "damage!",
+                dmg = self.currentweapon[1]
+                self.enemy1[1] -= dmg
+                print("The", self.enemy1[0], "was hit for", dmg, "damage!",
                     "\nRemaining enemy health:", self.enemy1[1])
-              try:
-                  self.currentweapon[2] -= 1
-              except:
-                  pass
-              self.choseturn = 1
-              self.blitz-=1
-              self.deathcheck()
-            except:
+                try:
+                    self.currentweapon[2] -= 1
+                except IndexError:
+                    pass
+                self.choseturn = 1
+                self.blitz-=1
+                self.deathcheck()
+            except IndexError:
                 self.deathcheck()
 
         for i in self.fightmenu:
@@ -131,22 +130,21 @@ class battle:
         # Listed actions
 
         if (inp == 'attack') or (inp == 'a'):
-          try:
-              dmg = self.currentweapon[1]
-              self.enemy1[1] -= dmg
-              print("The", self.enemy1[0], "was hit for", dmg, "damage!",
-                    "\nRemaining enemy health:", self.enemy1[1])
-              try:
-                  self.currentweapon[2] -= 1
-              except:
-                  pass
-              self.choseturn = 1
-              self.deathcheck()
-          except:
-            print("?")
-            sleep(2)
-            print("Where target?")
-            self.deathcheck()
+            try:
+                dmg = self.currentweapon[1]
+                self.enemy1[1] -= dmg
+                print("The", self.enemy1[0], "was hit for", dmg, "damage!",
+                        "\nRemaining enemy health:", self.enemy1[1])
+                try:
+                    self.currentweapon[2] -= 1
+                except:
+                    pass
+                self.choseturn = 1
+                self.deathcheck()
+            except IndexError:
+                print("?\n\nWhere's my weapon damage???")
+                sleep(2)
+                self.deathcheck()
 
         elif (inp == 'skip') or (inp == 's'):
             print("\nYou skipped your turn...")
@@ -161,15 +159,15 @@ class battle:
                 self.blitz-=1
                 print("Okay, blitzing...")
                 self.playerturn()
-            except:
+            except ValueError:
                 print("\n\n(Please give a valid number. Returning back to the menu)\n")
                 sleep(3)
                 self.playerturn()
 
         elif (inp == 'health') or (inp == 'h'):
-          print("\nYour current health:",self.health,"\n\nEnemy's health:\n",self.enemy1[0],":",self.enemy1[1],"\n\n\n--Menu--")
-          self.playerturn()
-        
+            print("\nYour current health:",self.health,"\n\nEnemy's health:\n",self.enemy1[0],":",self.enemy1[1],"\n\n\n--Menu--")
+            self.playerturn()
+            
         # Unlisted actions
 
         elif (inp == 'kill') or (inp == 'k'):
@@ -191,7 +189,7 @@ class battle:
 
         else:
             print("\nSay that again?")
-            self.playerturn()
+            self.playerturn
 
     def enemyturn(self):
         dmg = self.enemy1[2] * self.enemy1[3]
